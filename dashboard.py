@@ -63,7 +63,7 @@ if st.button("🚀 РОЗРАХУВАТИ ТА ЗГЕНЕРУВАТИ ЗВІТИ
             if uploaded_gen_file is not None:
                 gen_raw = pd.read_excel(uploaded_gen_file, header=None)
             else:
-                gen_raw = pd.read_excel("data/generation.xlsx", header=None)
+                gen_raw = pd.read_excel("generation.xlsx", header=None)
             
             header_text = str(gen_raw.iloc[0, 0]) + " " + str(gen_raw.iloc[1, 0])
             match = re.search(r'(\d+[\.,]?\d*)\s*(кВт|kW|kw)', header_text, flags=re.IGNORECASE)
@@ -73,9 +73,9 @@ if st.button("🚀 РОЗРАХУВАТИ ТА ЗГЕНЕРУВАТИ ЗВІТИ
             start_row = gen_raw[gen_raw.apply(lambda r: r.astype(str).str.contains('Jan', case=False).any(), axis=1)].index[0]
             gen_data = gen_raw.iloc[start_row:start_row+12, 1:25].apply(pd.to_numeric).fillna(0)
             
-            price_files = sorted(glob.glob("data/monthly_prices_*.xlsx"))
+            price_files = sorted(glob.glob("monthly_prices_*.xlsx"))
             if not price_files:
-                st.error("❌ Не знайдено файли цін у папці data/")
+                st.error("❌ Не знайдено файли цін у папці ")
                 st.stop()
         except Exception as e:
             st.error(f"❌ Помилка з файлами: {e}")
@@ -296,4 +296,5 @@ if st.button("🚀 РОЗРАХУВАТИ ТА ЗГЕНЕРУВАТИ ЗВІТИ
         display_df = df_y[["Рік", "Валовий Дохід", "Чистий Прибуток", "Баланс", "ROI (%)"]].copy()
         for col in ["Валовий Дохід", "Чистий Прибуток", "Баланс"]:
             display_df[col] = (display_df[col] / 1e6).round(2)
+
         st.dataframe(display_df, use_container_width=True)
